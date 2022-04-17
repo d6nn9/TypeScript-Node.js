@@ -7,4 +7,4 @@ export interface ILogger {
     err: (...args: unknown[]) => void;
     warn: (...args: unknown[]) => void;
 
-};
+}
