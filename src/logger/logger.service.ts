@@ -1,29 +1,28 @@
-import { Logger } from "tslog";
-import { ILogger } from "./logger.interface";
-
+import { Logger } from 'tslog';
+import { ILogger } from './logger.interface';
 
 export class LoggerService implements ILogger {
+	public logger: Logger;
 
-    public logger: Logger;
+	constructor() {
+		console.log('LOGGER HELLO');
+		this.logger = new Logger({
+			displayInstanceName: false,
+			displayLoggerName: false,
+			displayFilePath: 'hidden',
+			displayFunctionName: false,
+		});
+	}
 
-    constructor() {
-        this.logger = new Logger({
-            displayInstanceName: false,
-            displayLoggerName: false,
-            displayFilePath: 'hidden',
-            displayFunctionName: false,
-        })
-    }
+	log(...args: unknown[]): void {
+		this.logger.info(...args);
+	}
 
-    log(...args: unknown[]):void  {
-        this.logger.info(...args);
-    }
+	err(...args: unknown[]): void {
+		this.logger.error(...args);
+	}
 
-    err(...args: unknown[]):void  {
-        this.logger.error(...args);
-    }
-
-    warn(...args: unknown[]):void  {
-        this.logger.warn(...args);
-    }
+	warn(...args: unknown[]): void {
+		this.logger.warn(...args);
+	}
 }

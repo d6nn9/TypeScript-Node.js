@@ -4,5 +4,5 @@ import { UserLoginDto } from './dto/users.login.dto';
 
 export interface IUsersService {
 	createUser: (req: UserRegisterDto) => Promise<UserEntity | null>;
-	valideateUser: (req: UserLoginDto) => Promise<boolean>;
+	loginUser: (req: UserLoginDto) => Promise<UserEntity | null>;
 }
