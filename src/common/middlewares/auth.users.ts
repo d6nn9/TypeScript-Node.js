@@ -15,9 +15,10 @@ export class AuthMidlware implements IMiddlelware {
 				}
 				request.user = payload as string;
 				console.log(payload);
-				next();
+				return next();
 			});
+		} else {
+			next();
 		}
-		// next();
 	}
 }

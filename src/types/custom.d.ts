@@ -1,5 +1,6 @@
 declare namespace Express {
+	// import { UserEntity } from '../users/user.entity';
 	export interface Request {
-		user: string;
+		user?: import('../users/user.entity');
 	}
 }

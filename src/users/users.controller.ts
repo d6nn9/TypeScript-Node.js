@@ -7,6 +7,8 @@ import { IUsersService } from './users.service.interface';
 import { Validate } from '../common/middlewares/validate.users';
 import { sign } from 'jsonwebtoken';
 import { ConfigDotEnv } from '../config/config';
+import { AuthGuard } from '../common/middlewares/auth.guar';
+import { UserEntity } from './user.entity';
 
 export class UsersController extends ControllerRouter implements IUsersController {
 	constructor(logger: ILogger, private UsersService: IUsersService, private config: ConfigDotEnv) {
@@ -19,28 +21,28 @@ export class UsersController extends ControllerRouter implements IUsersControlle
 				middleware: [new Validate()],
 				func: this.registration,
 			},
+			{
+				method: 'get',
+				path: '/info',
+				middleware: [new AuthGuard(this.config)],
+				func: this.info,
+			},
 		]);
 	}
 
 	public async login(req: Request, res: Response, next: NextFunction): Promise<void> {
-		// console.log(req.user);
 		if (req.user) {
-			console.log('dwdwdwdwdwdwdwdwdwdwdwdwdwdwdwdwdwdwdwdwdwd');
 			this.ok(res, 'Your alredy login');
 			this.logger.log('User alredy login');
 			return;
 		}
-		// console.log('dwdwdwdwdwdwdwdwdwdwdwdwdwdwdwdwdwdwdwdwdwd');
 		const result = await this.UsersService.loginUser(req.body);
-		console.log('1');
 		if (result) {
-			const jwt = await this.setToken(result.email, this.config.get('SECRET_KEY'));
+			const jwt = await this.setToken(result, this.config.get('SECRET_KEY'));
 			this.ok(res, { jwt });
 			this.logger.log('login');
-			console.log('2');
 			return;
 		}
-		console.log('3');
 		this.send(res, 401, 'User is not found');
 		this.logger.log('login lost');
 	}
@@ -51,16 +53,22 @@ export class UsersController extends ControllerRouter implements IUsersControlle
 		next: NextFunction,
 	): Promise<void> {
 		const result = await this.UsersService.createUser(req.body);
-		console.log(result);
 		this.logger.log('registration');
 		this.ok(res, result);
 	}
 
-	private async setToken(email: string, secure: string): Promise<string> {
+	public async info(req: Request, res: Response, next: NextFunction): Promise<void> {
+		const result = await this.UsersService.getInfoUser(req);
+		this.logger.log('registration');
+		this.ok(res, result);
+	}
+
+	private async setToken(payload: UserEntity, secure: string): Promise<string> {
 		return new Promise((response, reject) => {
 			sign(
 				{
-					email,
+					email: payload.email,
+					name: payload.name,
 					iat: Math.floor(Date.now() / 1000),
 				},
 				secure,

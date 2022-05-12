@@ -13,6 +13,7 @@ export class ConfigDotEnv {
 		}
 		if (result.parsed) {
 			this.config = result.parsed;
+			console.log(result.parsed);
 		}
 	}
 	get(key: string): string {

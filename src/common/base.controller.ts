@@ -30,7 +30,7 @@ export class ControllerRouter {
 		for (const route of router) {
 			this.logger.log(`${route.method}`);
 			const handler = route.func.bind(this);
-			const middelwares = route.middleware?.map((o) => o.init);
+			const middelwares = route.middleware?.map((o) => o.init.bind(o));
 			const handlers = middelwares ? middelwares.concat(handler) : handler;
 			this.router[route.method](route.path, handlers);
 		}
